@@ -20,14 +20,29 @@ router.post('/', async (req, res) => {
         const newItem = await item.save();
         res.status(201).json(newItem);
     } catch (err) {
-        console.error("Error while saving the item:", err);
+        console.error("Erro ao salvar", err);
         res.status(400).json({ message: err.message });
     }
 });
 
 router.put('/:id', async (req, res) => {
+    let item;
+
     try {
-        const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        item = await Item.findById(req.params.id);
+        if (!item) {
+            return res.status(404).json({ message: 'Item não encontrado' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+
+    if (req.body.checked != null) {
+        item.checked = req.body.checked;
+    }
+    
+    try {
+        const updatedItem = await item.save();
         res.json(updatedItem);
     } catch (err) {
         res.status(400).json({ message: err.message });

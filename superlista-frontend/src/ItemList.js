@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
-function ItemList() {
+    function ItemList() {
     const [items, setItems] = useState([]);
     const [itemName, setItemName] = useState('');
 
@@ -25,18 +29,18 @@ function ItemList() {
         }
         
         try {
-            console.log("Trying to add item:", itemName);
+            console.log("Tentando adicionar item:", itemName);
             const response = await axios.post('/api/items', { name: itemName });
             
             if(response.data && response.status === 201) {
-                console.log("Item added successfully:", response.data);
+                console.log("Item adicionado", response.data);
                 setItems([...items, response.data]);
                 setItemName('');
             } else {
-                console.error('Response from server:', response);
+                console.error('Resposta do servidor:', response);
             }
         } catch (error) {
-            console.error("Error adding item", error);
+            console.error("Erro ao adicionar item", error);
         }
     };
 
@@ -46,26 +50,33 @@ function ItemList() {
             if(response.status === 200) {
                 setItems(items.filter(item => item._id !== itemId));
             } else {
-                console.error('Error deleting item:', response);
+                console.error('Erro ao excluir item:', response);
             }
         } catch (error) {
-            console.error("Error deleting item:", error);
+            console.error("Erro ao deletar item:", error);
         }
     };
 
+    const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
     return (
-        <div>
-            <input value={itemName} onChange={e => setItemName(e.target.value)} />
-            <button onClick={addItem}>Add</button>
+        
+        <div class='centro'>
+            <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' },}} noValidate autoComplete="off">
+                <TextField id="outlined-basic" label="Outlined" variant="outlined" value={itemName} onChange={e => setItemName(e.target.value)} />
+                <Button variant="contained" size="medium" onClick={addItem}>Adicionar</Button>
+            </Box>  
             <ul>
                 {items.map(item => (
                     <li key={item._id}>
-                        {item.name} <button onClick={() => deleteItem(item._id)}>Delete</button>
+                        <Checkbox {...label} />
+                        {item.name}  <Button variant="contained" size="small" onClick={() => deleteItem(item._id)}>Delete</Button>
                     </li>
                 ))}
             </ul>
         </div>
     );
+    
 }
 
 export default ItemList;
