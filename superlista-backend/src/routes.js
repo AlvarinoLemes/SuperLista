@@ -12,5 +12,6 @@ routes.delete('/superlista/:id', ListaController.delete);
 
 // Rota prioridade
 routes.get('/priorities', PriorityController.read);
+routes.post('/priorities', PriorityController.update);
 
 module.exports = routes;
